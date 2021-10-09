@@ -1,21 +1,21 @@
-import { App, Stack, StackProps, aws_iot } from "aws-cdk-lib"
+import { App, Stack, StackProps, aws_iot } from "aws-cdk-lib";
 
 type Props = StackProps & {
-  clientCertArn: string
-}
+  clientCertArn: string;
+};
 
 export class IotThing extends Stack {
   constructor(parent: App, id: string, props: Props) {
-    super(parent, id, props)
+    super(parent, id, props);
 
-    const { clientCertArn } = props
+    const { clientCertArn } = props;
 
-    const thingName = "wio_terminal"
+    const thingName = "wio_terminal";
     const thing = new aws_iot.CfnThing(this, "Thing", {
       thingName,
       attributePayload: {},
-    })
-    const policyName = "wio_terminal_policy"
+    });
+    const policyName = "wio_terminal_policy";
     const policy = new aws_iot.CfnPolicy(this, "Policy", {
       policyName,
       policyDocument: {
@@ -37,7 +37,7 @@ export class IotThing extends Stack {
           },
         ],
       },
-    })
+    });
 
     /**
      * これにより、証明書が権限を持つ。（認可）
@@ -50,7 +50,7 @@ export class IotThing extends Stack {
         policyName,
         principal: clientCertArn,
       },
-    )
+    );
 
     /**
      * これにより、証明書が thing とマッピングする。
@@ -63,9 +63,9 @@ export class IotThing extends Stack {
         thingName,
         principal: clientCertArn,
       },
-    )
+    );
 
-    policyPrincipalAtt.addDependsOn(policy)
-    thingPrincipalAtt.addDependsOn(thing)
+    policyPrincipalAtt.addDependsOn(policy);
+    thingPrincipalAtt.addDependsOn(thing);
   }
 }
