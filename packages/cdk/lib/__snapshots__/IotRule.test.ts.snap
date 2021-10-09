@@ -1,0 +1,156 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot test 1`] = `
+Object {
+  "Resources": Object {
+    "Bucket83908E77": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "MyLogGroup5C0DAD85": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "RetentionInDays": 731,
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "Role1ABCC5F0": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "iot.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "RoleDefaultPolicy5FFB7DAB": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:PutObject",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "cloudwatch:PutMetricData",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:DescribeLogStreams",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "MyLogGroup5C0DAD85",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "RoleDefaultPolicy5FFB7DAB",
+        "Roles": Array [
+          Object {
+            "Ref": "Role1ABCC5F0",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "moisturerule": Object {
+      "Properties": Object {
+        "RuleName": "moisture_rule",
+        "TopicRulePayload": Object {
+          "Actions": Array [
+            Object {
+              "S3": Object {
+                "BucketName": Object {
+                  "Ref": "Bucket83908E77",
+                },
+                "Key": "\${topic()}/\${timestamp()}",
+                "RoleArn": Object {
+                  "Fn::GetAtt": Array [
+                    "Role1ABCC5F0",
+                    "Arn",
+                  ],
+                },
+              },
+            },
+            Object {
+              "CloudwatchMetric": Object {
+                "MetricName": "001",
+                "MetricNamespace": "CUSTOM-IoT/Moisture",
+                "MetricTimestamp": "\${timestamp() / 1000}",
+                "MetricUnit": "None",
+                "MetricValue": "\${moisture}",
+                "RoleArn": Object {
+                  "Fn::GetAtt": Array [
+                    "Role1ABCC5F0",
+                    "Arn",
+                  ],
+                },
+              },
+            },
+          ],
+          "AwsIotSqlVersion": "2016-03-23",
+          "ErrorAction": Object {
+            "CloudwatchLogs": Object {
+              "LogGroupName": Object {
+                "Ref": "MyLogGroup5C0DAD85",
+              },
+              "RoleArn": Object {
+                "Fn::GetAtt": Array [
+                  "Role1ABCC5F0",
+                  "Arn",
+                ],
+              },
+            },
+          },
+          "Sql": "SELECT moisture, timestamp() as timestamp, * FROM 'wio_terminal/moisture'",
+        },
+      },
+      "Type": "AWS::IoT::TopicRule",
+    },
+  },
+}
+`;
