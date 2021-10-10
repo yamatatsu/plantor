@@ -6,10 +6,10 @@ import { Dashboard } from "../lib/Dashboard";
 const CLIENT_CERT_ARN = process.env.CLIENT_CERT_ARN!;
 
 const app = new App();
-new IotThing(app, "IotThing", {
+new IotThing(app, "Plantor-IotThing", {
   clientCertArn: CLIENT_CERT_ARN,
 });
 
-new IotRule(app, "IotRule", {});
+new IotRule(app, "Plantor-IotRule", {});
 
 new Dashboard(app, "Plantor-Dashboard", {});
