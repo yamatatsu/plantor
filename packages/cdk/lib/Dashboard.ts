@@ -7,9 +7,23 @@ export class Dashboard extends Stack {
     super(parent, id, props);
 
     new aws_cloudwatch.Dashboard(this, "Dashboard", {
-      dashboardName: "plantor",
+      // This name "CloudWatch-Default" is needed to show on Top page of CloudWatch as default dashboard
+      dashboardName: "CloudWatch-Default",
       start: "-P1W",
       widgets: [
+        [
+          new aws_cloudwatch.SingleValueWidget({
+            title: "Current Moisture",
+            metrics: [
+              new aws_cloudwatch.Metric({
+                metricName: "001",
+                namespace: "CUSTOM-IoT/Moisture",
+                period: Duration.hours(6),
+                statistic: "Average",
+              }),
+            ],
+          }),
+        ],
         [
           new aws_cloudwatch.GraphWidget({
             title: "Moisture",
