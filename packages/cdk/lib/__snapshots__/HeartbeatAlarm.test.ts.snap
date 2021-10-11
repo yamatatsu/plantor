@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot test 1`] = `
+Object {
+  "Resources": Object {
+    "HeartbeatAlarmModel": Object {
+      "Properties": Object {
+        "DetectorModelDefinition": Object {
+          "InitialStateName": "Normal",
+          "States": Array [
+            Object {
+              "OnEnter": Object {
+                "Events": Array [
+                  Object {
+                    "Actions": Array [
+                      Object {
+                        "SetTimer": Object {
+                          "Seconds": 60,
+                          "TimerName": "HeartbeatTimeoutTimer",
+                        },
+                      },
+                    ],
+                    "Condition": "true",
+                    "EventName": "createTimer",
+                  },
+                ],
+              },
+              "OnInput": Object {
+                "Events": Array [
+                  Object {
+                    "Actions": Array [
+                      Object {
+                        "ResetTimer": Object {
+                          "TimerName": "HeartbeatTimeoutTimer",
+                        },
+                      },
+                    ],
+                    "Condition": "!isUndefined($input.plantor-topic.deviceName)",
+                    "EventName": "inputEvent",
+                  },
+                ],
+                "TransitionEvents": Array [
+                  Object {
+                    "Actions": Array [
+                      Object {
+                        "ClearTimer": Object {
+                          "TimerName": "HeartbeatTimeoutTimer",
+                        },
+                      },
+                    ],
+                    "Condition": "timeout(\\"HeartbeatTimeoutTimer\\")",
+                    "EventName": "timerTimeout",
+                    "NextState": "Error",
+                  },
+                ],
+              },
+              "StateName": "Normal",
+            },
+            Object {
+              "OnEnter": Object {
+                "Events": Array [
+                  Object {
+                    "Actions": Array [
+                      Object {
+                        "IotTopicPublish": Object {
+                          "MqttTopic": "testFromIotEvent",
+                        },
+                      },
+                    ],
+                    "Condition": "true",
+                    "EventName": "testPublish",
+                  },
+                ],
+              },
+              "OnInput": Object {
+                "TransitionEvents": Array [
+                  Object {
+                    "Condition": "!isUndefined($input.plantor-topic.deviceName)",
+                    "EventName": "inputArrival",
+                    "NextState": "Normal",
+                  },
+                ],
+              },
+              "StateName": "Error",
+            },
+          ],
+        },
+        "EvaluationMethod": "BATCH",
+        "Key": "deviceName",
+        "RoleArn": "",
+      },
+      "Type": "AWS::IoTEvents::DetectorModel",
+    },
+    "TopicInput": Object {
+      "Properties": Object {
+        "InputDefinition": Object {
+          "Attributes": Array [
+            Object {
+              "JsonPath": "deviceName",
+            },
+          ],
+        },
+        "InputName": "plantor-topic",
+      },
+      "Type": "AWS::IoTEvents::Input",
+    },
+  },
+}
+`;

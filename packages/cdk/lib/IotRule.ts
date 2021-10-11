@@ -45,18 +45,26 @@ export class IotRule extends Stack {
       ruleName: "moisture_rule",
       topicRulePayload: {
         awsIotSqlVersion: "2016-03-23",
-        sql: "SELECT moisture, timestamp() as timestamp, * FROM 'wio_terminal/moisture'",
+        sql: q(`
+          SELECT
+            moisture,
+            timestamp() as timestamp,
+            topic(2) as deviceName,
+            topic(3) + topic(4) as sensorName,
+            *
+          FROM 'plantor/+/moisture/+'
+        `),
         actions: [
           {
             s3: {
               bucketName: bucket.bucketName,
-              key: "${topic()}/${timestamp()}",
+              key: "${topic(3)}/${topic(4)}/${timestamp()}",
               roleArn: role.roleArn,
             },
           },
           {
             cloudwatchMetric: {
-              metricName: "001",
+              metricName: "${topic(3) + topic(4)}",
               metricNamespace: "CUSTOM-IoT/Moisture",
               metricTimestamp: "${timestamp() / 1000}",
               metricUnit: "None",
@@ -74,4 +82,8 @@ export class IotRule extends Stack {
       },
     });
   }
+}
+
+function q(query: string): string {
+  return query.replace(/\n/g, " ").replace(/ +/g, " ");
 }
