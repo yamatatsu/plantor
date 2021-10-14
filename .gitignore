@@ -14,3 +14,6 @@ dist
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+
+# arduino
+secrets.h

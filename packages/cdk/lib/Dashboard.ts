@@ -13,10 +13,10 @@ export class Dashboard extends Stack {
       widgets: [
         [
           new aws_cloudwatch.SingleValueWidget({
-            title: "Current Moisture",
+            title: "moisture001",
             metrics: [
               new aws_cloudwatch.Metric({
-                metricName: "001",
+                metricName: "moisture001",
                 namespace: "CUSTOM-IoT/Moisture",
                 period: Duration.hours(6),
                 statistic: "Average",
@@ -30,7 +30,7 @@ export class Dashboard extends Stack {
             width: 24,
             left: [
               new aws_cloudwatch.Metric({
-                metricName: "001",
+                metricName: "moisture001",
                 namespace: "CUSTOM-IoT/Moisture",
                 period: Duration.hours(1),
                 statistic: "Average",

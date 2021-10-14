@@ -107,7 +107,7 @@ Object {
                 "BucketName": Object {
                   "Ref": "Bucket83908E77",
                 },
-                "Key": "\${topic()}/\${timestamp()}",
+                "Key": "\${topic(2) + topic(3)}/\${timestamp()}.json",
                 "RoleArn": Object {
                   "Fn::GetAtt": Array [
                     "Role1ABCC5F0",
@@ -118,7 +118,7 @@ Object {
             },
             Object {
               "CloudwatchMetric": Object {
-                "MetricName": "001",
+                "MetricName": "\${topic(2) + topic(3)}",
                 "MetricNamespace": "CUSTOM-IoT/Moisture",
                 "MetricTimestamp": "\${timestamp() / 1000}",
                 "MetricUnit": "None",
@@ -146,7 +146,7 @@ Object {
               },
             },
           },
-          "Sql": "SELECT moisture, timestamp() as timestamp, * FROM 'wio_terminal/moisture'",
+          "Sql": "SELECT topic() as topic, topic(2) + topic(3) as sensorName, timestamp() as timestamp, * FROM 'plantor/moisture/+'",
         },
       },
       "Type": "AWS::IoT::TopicRule",

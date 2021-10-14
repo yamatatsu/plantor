@@ -9,15 +9,15 @@ Object {
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"start\\":\\"-P1W\\",\\"widgets\\":[{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":3,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"view\\":\\"singleValue\\",\\"title\\":\\"Current Moisture\\",\\"region\\":\\"",
+              "{\\"start\\":\\"-P1W\\",\\"widgets\\":[{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":3,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"view\\":\\"singleValue\\",\\"title\\":\\"moisture001\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"CUSTOM-IoT/Moisture\\",\\"001\\",{\\"period\\":21600}]]}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":3,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Moisture\\",\\"region\\":\\"",
+              "\\",\\"metrics\\":[[\\"CUSTOM-IoT/Moisture\\",\\"moisture001\\",{\\"period\\":21600}]]}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":3,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Moisture\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"CUSTOM-IoT/Moisture\\",\\"001\\",{\\"period\\":3600}]],\\"yAxis\\":{}}}]}",
+              "\\",\\"metrics\\":[[\\"CUSTOM-IoT/Moisture\\",\\"moisture001\\",{\\"period\\":3600}]],\\"yAxis\\":{}}}]}",
             ],
           ],
         },

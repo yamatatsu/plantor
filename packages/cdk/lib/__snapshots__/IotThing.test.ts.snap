@@ -40,14 +40,14 @@ Object {
       ],
       "Properties": Object {
         "Principal": "test-clientCertArn",
-        "ThingName": "wio_terminal",
+        "ThingName": "wio_terminal_01",
       },
       "Type": "AWS::IoT::ThingPrincipalAttachment",
     },
     "Thing": Object {
       "Properties": Object {
         "AttributePayload": Object {},
-        "ThingName": "wio_terminal",
+        "ThingName": "wio_terminal_01",
       },
       "Type": "AWS::IoT::Thing",
     },

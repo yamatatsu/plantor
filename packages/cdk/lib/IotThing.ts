@@ -10,7 +10,7 @@ export class IotThing extends Stack {
 
     const { clientCertArn } = props;
 
-    const thingName = "wio_terminal";
+    const thingName = "wio_terminal_01";
     const thing = new aws_iot.CfnThing(this, "Thing", {
       thingName,
       attributePayload: {},
