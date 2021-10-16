@@ -6,6 +6,25 @@ export class Dashboard extends Stack {
   constructor(parent: App, id: string, props: Props) {
     super(parent, id, props);
 
+    /**
+     * map関数の実装: ((val - min) / (max - min)) * 100
+     * max: 380
+     * min: 640
+     */
+    const moisture001 = new aws_cloudwatch.MathExpression({
+      label: "moisture001",
+      expression: "((m1 - 640) / (380 - 640)) * 100",
+      period: Duration.hours(6),
+      usingMetrics: {
+        m1: new aws_cloudwatch.Metric({
+          metricName: "moisture001",
+          namespace: "CUSTOM-IoT/Moisture",
+          period: Duration.hours(6),
+          statistic: "Average",
+        }),
+      },
+    });
+
     new aws_cloudwatch.Dashboard(this, "Dashboard", {
       // This name "CloudWatch-Default" is needed to show on Top page of CloudWatch as default dashboard
       dashboardName: "CloudWatch-Default",
@@ -14,28 +33,14 @@ export class Dashboard extends Stack {
         [
           new aws_cloudwatch.SingleValueWidget({
             title: "moisture001",
-            metrics: [
-              new aws_cloudwatch.Metric({
-                metricName: "moisture001",
-                namespace: "CUSTOM-IoT/Moisture",
-                period: Duration.hours(6),
-                statistic: "Average",
-              }),
-            ],
+            metrics: [moisture001],
           }),
         ],
         [
           new aws_cloudwatch.GraphWidget({
             title: "Moisture",
             width: 24,
-            left: [
-              new aws_cloudwatch.Metric({
-                metricName: "moisture001",
-                namespace: "CUSTOM-IoT/Moisture",
-                period: Duration.hours(6),
-                statistic: "Average",
-              }),
-            ],
+            left: [moisture001],
           }),
         ],
       ],
