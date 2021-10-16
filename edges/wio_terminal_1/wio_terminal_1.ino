@@ -104,4 +104,9 @@ void loop() {
   mqtt_client.publish(topic, json_string);
 
   delay(60 * 60 * 1000);
+
+  // For calibration
+//  tft.print(sensorValue);
+//  tft.print(".");
+//  delay(5 * 1000);
 }
