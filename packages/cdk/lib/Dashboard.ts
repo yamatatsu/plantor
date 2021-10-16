@@ -9,7 +9,7 @@ export class Dashboard extends Stack {
     new aws_cloudwatch.Dashboard(this, "Dashboard", {
       // This name "CloudWatch-Default" is needed to show on Top page of CloudWatch as default dashboard
       dashboardName: "CloudWatch-Default",
-      start: "-P1W",
+      start: "-P1M",
       widgets: [
         [
           new aws_cloudwatch.SingleValueWidget({
@@ -32,7 +32,7 @@ export class Dashboard extends Stack {
               new aws_cloudwatch.Metric({
                 metricName: "moisture001",
                 namespace: "CUSTOM-IoT/Moisture",
-                period: Duration.hours(1),
+                period: Duration.hours(6),
                 statistic: "Average",
               }),
             ],
