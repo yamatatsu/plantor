@@ -7,7 +7,7 @@ export class Dashboard extends Stack {
     super(parent, id, props);
 
     /**
-     * map関数の実装: ((val - min) / (max - min)) * 100
+     * calibration: ((val - min) / (max - min)) * 100
      * max: 380
      * min: 640
      */
