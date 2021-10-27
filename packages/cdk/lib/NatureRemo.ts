@@ -73,7 +73,7 @@ export class NatureRemo extends Stack {
         },
       );
 
-    const tempretureTask = new aws_stepfunctions_tasks.CallAwsService(
+    const temperatureTask = new aws_stepfunctions_tasks.CallAwsService(
       this,
       "PutMetricTask",
       {
@@ -83,7 +83,7 @@ export class NatureRemo extends Stack {
           Namespace: "CUSTOM-IoT/Room",
           MetricData: [
             {
-              MetricName: "Tempreture",
+              MetricName: "Temperature",
               Value: aws_stepfunctions.JsonPath.numberAt(
                 "$.NatureRemoOutput.Events.te.val",
               ),
@@ -112,7 +112,7 @@ export class NatureRemo extends Stack {
       this,
       "MyStateMachine",
       {
-        definition: secretTask.next(natureRemoTask).next(tempretureTask),
+        definition: secretTask.next(natureRemoTask).next(temperatureTask),
       },
     );
 
