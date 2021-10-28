@@ -62,7 +62,6 @@ export class NatureRemo extends Stack {
         MetricData: [
           {
             MetricName: "Temperature",
-            // `JsonPath.numberAt()` を使わないとCFnにて「putMetricDataのMetricData.ValueはNUMBERじゃないとダメです！」って怒られる。優しい世界。
             Value: sfn.JsonPath.numberAt("$.NatureRemoOutput.Events.te.val"),
           },
           {
