@@ -1,0 +1,336 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot test 1`] = `
+Object {
+  "Outputs": Object {
+    "NatureRemoEndpointBC959F95": Object {
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "https://",
+            Object {
+              "Ref": "NatureRemoEndpoint4D1C1747",
+            },
+            ".execute-api.",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            ".",
+            Object {
+              "Ref": "AWS::URLSuffix",
+            },
+            "/",
+            Object {
+              "Ref": "NatureRemoEndpointDeploymentStageprodF46CF206",
+            },
+            "/",
+          ],
+        ],
+      },
+    },
+  },
+  "Resources": Object {
+    "MyStateMachine6C968CA5": Object {
+      "DependsOn": Array [
+        "MyStateMachineRoleDefaultPolicyE468EB18",
+        "MyStateMachineRoleD59FFEBC",
+      ],
+      "Properties": Object {
+        "DefinitionString": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"StartAt\\":\\"GetSecretTask\\",\\"States\\":{\\"GetSecretTask\\":{\\"Next\\":\\"CallNatureRemoTask\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.SecretOutput\\",\\"ResultSelector\\":{\\"Token.$\\":\\"$.Parameter.Value\\"},\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:ssm:getParameter\\",\\"Parameters\\":{\\"Name\\":\\"/plantor/nature-remo-token\\"}},\\"CallNatureRemoTask\\":{\\"Next\\":\\"PutMetricTask\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.NatureRemoOutput\\",\\"ResultSelector\\":{\\"Events.$\\":\\"$.ResponseBody[1].newest_events\\"},\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::apigateway:invoke\\",\\"Parameters\\":{\\"ApiEndpoint\\":\\"",
+              Object {
+                "Ref": "NatureRemoEndpoint4D1C1747",
+              },
+              ".execute-api.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".",
+              Object {
+                "Ref": "AWS::URLSuffix",
+              },
+              "\\",\\"Method\\":\\"GET\\",\\"Headers\\":{\\"x-Authorization.$\\":\\"States.Array(States.Format('Bearer {}', $.SecretOutput.Token))\\"},\\"Stage\\":\\"",
+              Object {
+                "Ref": "NatureRemoEndpointDeploymentStageprodF46CF206",
+              },
+              "\\",\\"AuthType\\":\\"NO_AUTH\\"}},\\"PutMetricTask\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.PutMetricOutput\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:cloudwatch:putMetricData\\",\\"Parameters\\":{\\"Namespace\\":\\"CUSTOM-IoT/Room\\",\\"MetricData\\":[{\\"MetricName\\":\\"Temperature\\",\\"Value.$\\":\\"$.NatureRemoOutput.Events.te.val\\"},{\\"MetricName\\":\\"Illuminance\\",\\"Value.$\\":\\"$.NatureRemoOutput.Events.il.val\\"},{\\"MetricName\\":\\"Humidity\\",\\"Value.$\\":\\"$.NatureRemoOutput.Events.hu.val\\"}]}}}}",
+            ],
+          ],
+        },
+        "RoleArn": Object {
+          "Fn::GetAtt": Array [
+            "MyStateMachineRoleD59FFEBC",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::StepFunctions::StateMachine",
+    },
+    "MyStateMachineEventsRole7C46BBB5": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "events.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "MyStateMachineEventsRoleDefaultPolicy6422AE18": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "MyStateMachine6C968CA5",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "MyStateMachineEventsRoleDefaultPolicy6422AE18",
+        "Roles": Array [
+          Object {
+            "Ref": "MyStateMachineEventsRole7C46BBB5",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "MyStateMachineRoleD59FFEBC": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "states.",
+                      Object {
+                        "Ref": "AWS::Region",
+                      },
+                      ".amazonaws.com",
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "MyStateMachineRoleDefaultPolicyE468EB18": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": "execute-api:Invoke",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":execute-api:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "NatureRemoEndpoint4D1C1747",
+                    },
+                    "/",
+                    Object {
+                      "Ref": "NatureRemoEndpointDeploymentStageprodF46CF206",
+                    },
+                    "/GET/*",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "cloudwatch:PutMetricData",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "MyStateMachineRoleDefaultPolicyE468EB18",
+        "Roles": Array [
+          Object {
+            "Ref": "MyStateMachineRoleD59FFEBC",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "NatureRemoEndpoint4D1C1747": Object {
+      "Properties": Object {
+        "Name": "NatureRemoEndpoint",
+      },
+      "Type": "AWS::ApiGateway::RestApi",
+    },
+    "NatureRemoEndpointAccountEA653B94": Object {
+      "DependsOn": Array [
+        "NatureRemoEndpoint4D1C1747",
+      ],
+      "Properties": Object {
+        "CloudWatchRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "NatureRemoEndpointCloudWatchRole2E1E204E",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ApiGateway::Account",
+    },
+    "NatureRemoEndpointCloudWatchRole2E1E204E": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "apigateway.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "NatureRemoEndpointDeployment341CCD2Bb58d94d197b5f43f2928cd0f465f8ee2": Object {
+      "DependsOn": Array [
+        "NatureRemoEndpointGETEB6CF49D",
+      ],
+      "Properties": Object {
+        "Description": "Automatically created by the RestApi construct",
+        "RestApiId": Object {
+          "Ref": "NatureRemoEndpoint4D1C1747",
+        },
+      },
+      "Type": "AWS::ApiGateway::Deployment",
+    },
+    "NatureRemoEndpointDeploymentStageprodF46CF206": Object {
+      "Properties": Object {
+        "DeploymentId": Object {
+          "Ref": "NatureRemoEndpointDeployment341CCD2Bb58d94d197b5f43f2928cd0f465f8ee2",
+        },
+        "RestApiId": Object {
+          "Ref": "NatureRemoEndpoint4D1C1747",
+        },
+        "StageName": "prod",
+      },
+      "Type": "AWS::ApiGateway::Stage",
+    },
+    "NatureRemoEndpointGETEB6CF49D": Object {
+      "Properties": Object {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "GET",
+        "Integration": Object {
+          "IntegrationHttpMethod": "GET",
+          "RequestParameters": Object {
+            "integration.request.header.Authorization": "method.request.header.x-Authorization",
+          },
+          "Type": "HTTP_PROXY",
+          "Uri": "https://api.nature.global/1/devices",
+        },
+        "RequestParameters": Object {
+          "method.request.header.x-Authorization": true,
+        },
+        "ResourceId": Object {
+          "Fn::GetAtt": Array [
+            "NatureRemoEndpoint4D1C1747",
+            "RootResourceId",
+          ],
+        },
+        "RestApiId": Object {
+          "Ref": "NatureRemoEndpoint4D1C1747",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "ScheduleRuleDA5BD877": Object {
+      "Properties": Object {
+        "ScheduleExpression": "rate(1 hour)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Ref": "MyStateMachine6C968CA5",
+            },
+            "Id": "Target0",
+            "RoleArn": Object {
+              "Fn::GetAtt": Array [
+                "MyStateMachineEventsRole7C46BBB5",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+  },
+}
+`;
