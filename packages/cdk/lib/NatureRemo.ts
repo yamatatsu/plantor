@@ -8,6 +8,8 @@ import {
   aws_stepfunctions as sfn,
   aws_stepfunctions_tasks as tasks,
   aws_apigateway,
+  aws_s3,
+  RemovalPolicy,
 } from "aws-cdk-lib";
 
 type Props = StackProps & {};
@@ -79,8 +81,34 @@ export class NatureRemo extends Stack {
       resultPath: "$.PutMetricOutput",
     });
 
+    const bucket = new aws_s3.Bucket(this, "Bucket", {
+      removalPolicy: RemovalPolicy.DESTROY,
+      blockPublicAccess: aws_s3.BlockPublicAccess.BLOCK_ALL,
+    });
+
+    const taskToPutS3Object = new tasks.CallAwsService(
+      this,
+      "PutToS3ObjectTask",
+      {
+        service: "s3",
+        action: "putObject",
+        parameters: {
+          Bucket: bucket.bucketName,
+          Key: sfn.JsonPath.stringAt(
+            "States.Format('{}.json', $.NatureRemoOutput.Events.te.created_at)",
+          ),
+          Body: sfn.JsonPath.stringAt("$.NatureRemoOutput.Events"),
+        },
+        iamResources: [bucket.arnForObjects("*")],
+        resultPath: "$.PutS3ObjectOutput",
+      },
+    );
+
+    const branchedTask = new sfn.Parallel(this, "ParallelOutput");
     const stateMachine = new sfn.StateMachine(this, "MyStateMachine", {
-      definition: taskToGetSecret.next(taskToCallApi).next(taskToPutMetric),
+      definition: taskToGetSecret
+        .next(taskToCallApi)
+        .next(branchedTask.branch(taskToPutMetric).branch(taskToPutS3Object)),
     });
 
     new aws_events.Rule(this, "ScheduleRule", {

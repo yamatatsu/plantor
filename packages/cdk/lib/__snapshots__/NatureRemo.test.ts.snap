@@ -31,6 +31,19 @@ Object {
     },
   },
   "Resources": Object {
+    "Bucket83908E77": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
     "MyStateMachine6C968CA5": Object {
       "DependsOn": Array [
         "MyStateMachineRoleDefaultPolicyE468EB18",
@@ -45,7 +58,7 @@ Object {
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::aws-sdk:ssm:getParameter\\",\\"Parameters\\":{\\"Name\\":\\"/plantor/nature-remo-token\\"}},\\"CallNatureRemoTask\\":{\\"Next\\":\\"PutMetricTask\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.NatureRemoOutput\\",\\"ResultSelector\\":{\\"Events.$\\":\\"$.ResponseBody[1].newest_events\\"},\\"Resource\\":\\"arn:",
+              ":states:::aws-sdk:ssm:getParameter\\",\\"Parameters\\":{\\"Name\\":\\"/plantor/nature-remo-token\\"}},\\"CallNatureRemoTask\\":{\\"Next\\":\\"ParallelOutput\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.NatureRemoOutput\\",\\"ResultSelector\\":{\\"Events.$\\":\\"$.ResponseBody[1].newest_events\\"},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -65,11 +78,19 @@ Object {
               Object {
                 "Ref": "NatureRemoEndpointDeploymentStageprodF46CF206",
               },
-              "\\",\\"AuthType\\":\\"NO_AUTH\\"}},\\"PutMetricTask\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.PutMetricOutput\\",\\"Resource\\":\\"arn:",
+              "\\",\\"AuthType\\":\\"NO_AUTH\\"}},\\"ParallelOutput\\":{\\"Type\\":\\"Parallel\\",\\"End\\":true,\\"Branches\\":[{\\"StartAt\\":\\"PutMetricTask\\",\\"States\\":{\\"PutMetricTask\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.PutMetricOutput\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::aws-sdk:cloudwatch:putMetricData\\",\\"Parameters\\":{\\"Namespace\\":\\"CUSTOM-IoT/Room\\",\\"MetricData\\":[{\\"MetricName\\":\\"Temperature\\",\\"Value.$\\":\\"$.NatureRemoOutput.Events.te.val\\"},{\\"MetricName\\":\\"Illuminance\\",\\"Value.$\\":\\"$.NatureRemoOutput.Events.il.val\\"},{\\"MetricName\\":\\"Humidity\\",\\"Value.$\\":\\"$.NatureRemoOutput.Events.hu.val\\"}]}}}}",
+              ":states:::aws-sdk:cloudwatch:putMetricData\\",\\"Parameters\\":{\\"Namespace\\":\\"CUSTOM-IoT/Room\\",\\"MetricData\\":[{\\"MetricName\\":\\"Temperature\\",\\"Value.$\\":\\"$.NatureRemoOutput.Events.te.val\\"},{\\"MetricName\\":\\"Illuminance\\",\\"Value.$\\":\\"$.NatureRemoOutput.Events.il.val\\"},{\\"MetricName\\":\\"Humidity\\",\\"Value.$\\":\\"$.NatureRemoOutput.Events.hu.val\\"}]}}}},{\\"StartAt\\":\\"PutToS3ObjectTask\\",\\"States\\":{\\"PutToS3ObjectTask\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.PutS3ObjectOutput\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:putObject\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "Bucket83908E77",
+              },
+              "\\",\\"Key.$\\":\\"States.Format('{}.json', $.NatureRemoOutput.Events.te.created_at)\\",\\"Body.$\\":\\"$.NatureRemoOutput.Events\\"}}}}]}}}",
             ],
           ],
         },
@@ -195,6 +216,24 @@ Object {
               "Action": "cloudwatch:PutMetricData",
               "Effect": "Allow",
               "Resource": "*",
+            },
+            Object {
+              "Action": "s3:putObject",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
             },
           ],
           "Version": "2012-10-17",
