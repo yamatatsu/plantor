@@ -4,9 +4,6 @@ exports[`snapshot test 1`] = `
 Object {
   "Resources": Object {
     "PPA": Object {
-      "DependsOn": Array [
-        "Policy",
-      ],
       "Properties": Object {
         "PolicyName": "wio_terminal_policy",
         "Principal": "test-clientCertArn",
@@ -35,9 +32,6 @@ Object {
       "Type": "AWS::IoT::Policy",
     },
     "TPA": Object {
-      "DependsOn": Array [
-        "Thing",
-      ],
       "Properties": Object {
         "Principal": "test-clientCertArn",
         "ThingName": "wio_terminal_01",

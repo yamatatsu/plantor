@@ -10,14 +10,13 @@ export class IotThing extends Stack {
 
     const { clientCertArn } = props;
 
-    const thingName = "wio_terminal_01";
     const thing = new aws_iot.CfnThing(this, "Thing", {
-      thingName,
+      thingName: "wio_terminal_01",
       attributePayload: {},
     });
-    const policyName = "wio_terminal_policy";
+
     const policy = new aws_iot.CfnPolicy(this, "Policy", {
-      policyName,
+      policyName: "wio_terminal_policy",
       policyDocument: {
         Version: "2012-10-17",
         Statement: [
@@ -43,29 +42,18 @@ export class IotThing extends Stack {
      * これにより、証明書が権限を持つ。（認可）
      * この設定がないと、証明書があってもmqttとかは認証エラーとなる。
      */
-    const policyPrincipalAtt = new aws_iot.CfnPolicyPrincipalAttachment(
-      this,
-      "PPA",
-      {
-        policyName,
-        principal: clientCertArn,
-      },
-    );
+    new aws_iot.CfnPolicyPrincipalAttachment(this, "PPA", {
+      policyName: policy.policyName!,
+      principal: clientCertArn,
+    });
 
     /**
      * これにより、証明書が thing とマッピングする。
      * この設定がないと AWS IoT は mqtt を受け取っても各機能に紐付けられない。
      */
-    const thingPrincipalAtt = new aws_iot.CfnThingPrincipalAttachment(
-      this,
-      "TPA",
-      {
-        thingName,
-        principal: clientCertArn,
-      },
-    );
-
-    policyPrincipalAtt.addDependsOn(policy);
-    thingPrincipalAtt.addDependsOn(thing);
+    new aws_iot.CfnThingPrincipalAttachment(this, "TPA", {
+      thingName: thing.thingName!,
+      principal: clientCertArn,
+    });
   }
 }
