@@ -1,6 +1,6 @@
 import { SynthUtils } from "@aws-cdk/assert";
 import { App } from "aws-cdk-lib";
-import { IotThing } from "./IotThing";
+import { IotThing } from "../lib/IotThing";
 
 test("snapshot test", () => {
   const app = new App();
